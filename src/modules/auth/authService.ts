@@ -1,6 +1,7 @@
 // auth service
 import { findUserByEmail } from "./authRepository";
 import { comparePassword } from "../../utils/password";
+import { generateToken } from "../../utils/jwt";
 
 export const login = async (email: string, password: string) => {
 
@@ -22,14 +23,21 @@ export const login = async (email: string, password: string) => {
         };
     }
 
+    const token = generateToken(
+        user.id,
+        user.email
+    );
+
 
     return {
         message: "Login successful",
+        token,
         user: {
             id: user.id,
             firstname: user.firstname,
             lastname: user.lastname,
-            email: user.email
+            email: user.email,
+
         }
     };
 }
