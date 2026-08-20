@@ -5,16 +5,17 @@ import { generateToken } from "../../utils/jwt";
 
 export const login = async (email: string, password: string) => {
 
+    // 1. find user my email
     const user = await findUserByEmail(email);
 
-    // verify if user exists 
+    // 2. verify if user exists 
     if (!user) {
         return {
             message: "User not found"
         }
     }
 
-    // verify the password is correct
+    // 3. verify the password is correct
     const isPasswordValid = comparePassword(password, user.password);
 
     if (!isPasswordValid) {
@@ -23,12 +24,13 @@ export const login = async (email: string, password: string) => {
         };
     }
 
+    //4. generate token
     const token = generateToken(
         user.id,
         user.email
     );
 
-
+    //5. return response
     return {
         message: "Login successful",
         token,

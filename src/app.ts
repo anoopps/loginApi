@@ -13,6 +13,7 @@ app.get("/", (req, res) => {
     });
 });
 
+// authRoutes
 app.use("/api", authRoutes);
 
 export default app;
