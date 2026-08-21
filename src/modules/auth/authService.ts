@@ -43,3 +43,22 @@ export const login = async (email: string, password: string) => {
         }
     };
 }
+
+export const getProfile = async (email: string) => {
+
+    const user = await findUserByEmail(email);
+
+    if (!user) {
+        return null;
+    }
+
+    return {
+        user: {
+            id: user.id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email
+        }
+    }
+
+};

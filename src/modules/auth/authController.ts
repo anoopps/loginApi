@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { login as loginService } from "./authService";
+import { login as loginService, getProfile } from "./authService";
 
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -15,12 +15,34 @@ export const login = async (req: Request, res: Response) => {
         if (result) {
             res.json(result);
         } else {
-            res.status(200).json({ success: false, "message": "User not found" });
+            return res.status(200).json({ success: false, "message": "User not found" });
         }
 
     } catch (error: any) {
         res.status(400).json({ success: false, "message": error.message });
     }
 
+};
+
+export const profile = async (req: Request, res: Response) => {
+    try {
+        console.log(req.user);
+        const userEmail = req.user.email;
+
+        if (!userEmail) {
+            return res.status(401).json({ "message": "User not found" });
+        }
+
+        getProfile(userEmail)
+            .then((result) => {
+                res.json(result);
+            })
+            .catch((error) => {
+                res.status(500).json({ error: error.message });
+            });
+
+    } catch (error) {
+        res.status(400).json({ success: false, "message": "Invalid user!" })
+    }
 };
 
