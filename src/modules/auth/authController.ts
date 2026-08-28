@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { login as loginService, getProfile } from "./authService";
+import { login as loginService, getProfile, registerUser } from "./authService";
 
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -46,3 +46,23 @@ export const profile = async (req: Request, res: Response) => {
     }
 };
 
+export const register = async (req: Request, res: Response) => {
+
+    const { firstname, lastname, email, password } = req.body;
+
+    if (!firstname || !email || !password) {
+        return res.status(401).json({ "message": "Invalid parameter" });
+    }
+
+
+    const result = await registerUser(firstname, lastname, email, password);
+    console.log(result);
+
+    if (!result.success) {
+        return res.status(410).json({
+            "message": result.message
+        })
+    }
+
+    return res.status(201).json({ "message": "User Sucessfully registered" })
+}

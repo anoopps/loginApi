@@ -1,5 +1,5 @@
 // authRepository
-import { RowDataPacket } from "mysql2";
+import { RowDataPacket, ResultSetHeader } from "mysql2";
 import pool from "../../config/database";
 import { User } from "./authTypes";
 
@@ -19,5 +19,19 @@ export const findUserByEmail = async (email: string): Promise<User | null> => {
     } catch (error) {
         return null;
     }
+}
 
+export const register = async (firstname: string, lastname: string, email: string, password: string) => {
+
+    try {
+        const [result] = await pool.execute<ResultSetHeader>(`INSERT INTO users
+            (firstname, lastname, email, password)
+         VALUES (?, ?, ?, ?)`,
+            [firstname, lastname, email, password]);
+
+        return result.insertId;
+
+    } catch (error) {
+        return null;
+    }
 }

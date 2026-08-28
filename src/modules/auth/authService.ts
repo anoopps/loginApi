@@ -1,7 +1,11 @@
 // auth service
-import { findUserByEmail } from "./authRepository";
-import { comparePassword } from "../../utils/password";
+import { findUserByEmail, register } from "./authRepository";
+import { comparePassword, hashPassword } from "../../utils/password";
 import { generateToken } from "../../utils/jwt";
+export interface registerResponse {
+    success: boolean;
+    message: string;
+}
 
 export const login = async (email: string, password: string) => {
 
@@ -61,4 +65,34 @@ export const getProfile = async (email: string) => {
         }
     }
 
+};
+
+export const registerUser = async (firstname: string, lastname: string, email: string, password: string): Promise<registerResponse> => {
+
+    // 1. check if user email already exists
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+        return {
+            success: false,
+            message: "Email Already Registered"
+        }
+    }
+
+    // 2. if user not exists hashpassword using utils
+    const maskPassword = await hashPassword(password);
+
+    // 3. register User
+    const result = await register(firstname, lastname, email, maskPassword);
+    console.log(result);
+    if (result) {
+        return {
+            success: true,
+            message: "User Registration Successfull"
+        }
+    }
+
+    return {
+        success: false,
+        message: "User Registration Failed"
+    }
 };
